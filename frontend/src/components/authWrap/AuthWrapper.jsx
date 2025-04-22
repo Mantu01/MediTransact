@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { login } from "../../store/userSlice";
 import config from "../../config/config";
+import AuthLoader from "./AuthLoader";
 
 const AuthWrapper = ({ children }) => {
   const [loading, setLoading] = useState(true);
@@ -72,7 +73,7 @@ const AuthWrapper = ({ children }) => {
   }, [loading, location.pathname, user, navigate]);
   
   if (loading) {
-    return <div>Loading...</div>;
+    return <AuthLoader/>;
   }
 
   return children;

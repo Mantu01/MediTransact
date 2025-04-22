@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from 'react';
+import Logo from '../logo/Logo';
 
-// Professional Loading Component for AuthWrapper using only Tailwind CSS
 export default function AuthLoader() {
   const [progress, setProgress] = useState(0);
-  const [dots, setDots] = useState('');
-  
+
   useEffect(() => {
-    // Progress bar animation
     if (progress < 100) {
       const timer = setTimeout(() => {
         setProgress(prev => prev + 1);
@@ -14,95 +12,108 @@ export default function AuthLoader() {
       return () => clearTimeout(timer);
     }
   }, [progress]);
-  
-  useEffect(() => {
-    // Loading dots animation
-    const dotInterval = setInterval(() => {
-      setDots(prev => (prev.length >= 3 ? '' : prev + '.'));
-    }, 400);
-    
-    return () => clearInterval(dotInterval);
-  }, []);
 
   return (
-    <div className="fixed inset-0 flex flex-col items-center justify-center bg-gradient-to-r from-slate-900 to-gray-900">
-      {/* Company Logo */}
-      <div className="mb-12 animate-fade-in">
-        <div className="flex items-center">
-          <div className="w-12 h-12 rounded-lg bg-blue-500 flex items-center justify-center">
+    <div className="fixed inset-0 flex flex-col items-center justify-center bg-gradient-to-b from-blue-50 via-white to-blue-50">
+      <div className="w-full max-w-md px-8 py-12 flex flex-col items-center">
+        {/* Logo with pulsing effect */}
+        <div className="mb-8">
+          <div className="relative">
+            <div className="absolute -inset-1 bg-blue-100 rounded-full opacity-30 animate-pulse"></div>
+            <div className="relative w-24 h-24 flex items-center justify-center">
+              <Logo className="w-full h-full text-blue-600" />
+            </div>
+          </div>
+        </div>
+        
+        {/* App Title with improved typography */}
+        <h1 className="text-3xl font-bold text-gray-800 mb-1 tracking-tight">Medical Portal</h1>
+        <p className="text-gray-500 text-sm mb-10">Secure patient transactions management system</p>
+        
+        {/* Enhanced Progress Container */}
+        <div className="w-full mb-8">
+          <div className="flex justify-between text-sm font-medium mb-2">
+            <span className="text-gray-600">Loading your secure environment</span>
+            <span className="text-blue-600 font-semibold">{progress}%</span>
+          </div>
+          
+          {/* Improved Progress Bar */}
+          <div className="relative h-2 w-full bg-gray-100 rounded-full overflow-hidden shadow-inner">
+            <div 
+              className="h-full bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full transition-all duration-300 ease-out"
+              style={{ width: `${progress}%` }}
+            >
+              {/* Shimmer effect */}
+              <div className="absolute top-0 left-0 right-0 bottom-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-30 animate-shimmer"></div>
+            </div>
+          </div>
+          
+          {/* Status Message */}
+          <div className="mt-3 flex items-center justify-center text-xs text-gray-500">
             <svg 
               xmlns="http://www.w3.org/2000/svg" 
-              width="28" 
-              height="28" 
+              width="14" 
+              height="14" 
               viewBox="0 0 24 24" 
               fill="none" 
               stroke="currentColor" 
               strokeWidth="2" 
               strokeLinecap="round" 
               strokeLinejoin="round" 
-              className="text-white animate-spin-slow"
+              className="mr-2 text-blue-500 animate-spin"
             >
-              <path d="M18 6H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h13a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2Z"></path>
-              <path d="m2 14 7-4"></path>
-              <path d="M9 17v-5a2 2 0 0 1 2-2h8"></path>
-              <path d="m15 8 3 3-3 3"></path>
+              <path d="M21 12a9 9 0 1 1-6.219-8.56" />
             </svg>
+            {progress < 30 && "Initializing secure connection..."}
+            {progress >= 30 && progress < 60 && "Verifying credentials..."}
+            {progress >= 60 && progress < 90 && "Loading patient data..."}
+            {progress >= 90 && "Finalizing setup..."}
           </div>
-          <div className="ml-3 text-xl font-bold text-white">SecurePortal</div>
+        </div>
+        
+        {/* Security Badges */}
+        <div className="flex items-center justify-center space-x-4 mt-2">
+          <div className="flex items-center text-xs text-gray-400">
+            <svg 
+              xmlns="http://www.w3.org/2000/svg" 
+              width="14" 
+              height="14" 
+              viewBox="0 0 24 24" 
+              fill="none" 
+              stroke="currentColor" 
+              strokeWidth="2" 
+              strokeLinecap="round" 
+              strokeLinejoin="round" 
+              className="mr-1"
+            >
+              <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
+              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+            </svg>
+            HIPAA Compliant
+          </div>
+          <div className="flex items-center text-xs text-gray-400">
+            <svg 
+              xmlns="http://www.w3.org/2000/svg" 
+              width="14" 
+              height="14" 
+              viewBox="0 0 24 24" 
+              fill="none" 
+              stroke="currentColor" 
+              strokeWidth="2" 
+              strokeLinecap="round" 
+              strokeLinejoin="round" 
+              className="mr-1"
+            >
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" />
+            </svg>
+            End-to-End Encrypted
+          </div>
         </div>
       </div>
       
-      {/* Main Loader */}
-      <div className="relative w-64 opacity-0 animate-fade-in" style={{ animationDelay: '300ms', animationFillMode: 'forwards' }}>
-        {/* Progress Bar */}
-        <div className="h-1 w-full bg-gray-700 rounded-full overflow-hidden relative mb-6">
-          <div 
-            className="h-full bg-gradient-to-r from-blue-400 to-blue-600 rounded-full transition-all duration-300 ease-out" 
-            style={{ width: `${progress}%` }}
-          />
-        </div>
-        
-        {/* Loading Text */}
-        <div className="flex justify-between items-center">
-          <div className="text-gray-500 font-medium tracking-wider text-sm">
-            LOADING{dots}
-          </div>
-          <div className="text-blue-400 font-medium text-sm">{progress}%</div>
-        </div>
-      </div>
-        
-      {/* Animated Background Elements */}
-      <div className="absolute inset-0 z-0 overflow-hidden">
-        {[...Array(10)].map((_, index) => {
-          const size = Math.floor(Math.random() * 100) + 50;
-          const positionX = Math.floor(Math.random() * 100);
-          const positionY = Math.floor(Math.random() * 100);
-          const duration = Math.floor(Math.random() * 8) + 4;
-          const delay = Math.floor(Math.random() * 5);
-          
-          return (
-            <div 
-              key={index}
-              className="absolute bg-blue-500 opacity-10 rounded-full animate-float"
-              style={{
-                width: `${size}px`,
-                height: `${size}px`,
-                left: `${positionX}%`,
-                top: `${positionY}%`,
-                animationDuration: `${duration}s`,
-                animationDelay: `${delay}s`
-              }}
-            />
-          );
-        })}
-      </div>
-      
-      {/* Status Message */}
-      <div 
-        className="text-xs text-gray-500 mt-8 font-medium opacity-0 animate-fade-in"
-        style={{ animationDelay: '1000ms', animationFillMode: 'forwards' }}
-      >
-        Authenticating user credentials...
+      {/* Footer Note */}
+      <div className="absolute bottom-6 text-xs text-gray-400 text-center">
+        <p>&copy; 2025 Medical Portal | Securely connecting healthcare professionals</p>
       </div>
     </div>
   );

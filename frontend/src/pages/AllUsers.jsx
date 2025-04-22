@@ -11,6 +11,8 @@ function AllUsers() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [isUpdating, setIsUpdating] = useState(false); // New state to track update status
+  const [isAdding, setIsAdding] = useState(false); // New state to track adding status
   const [newUser, setNewUser] = useState({
     name: '',
     email: '',
@@ -53,6 +55,7 @@ function AllUsers() {
 
   const handleSaveEdit = async () => {
     try {
+      setIsUpdating(true); // Set updating state to true
       await axios.put(`${config.API_URL}/api/user/${selectedUser._id}`, selectedUser, { withCredentials: true });
       setUsers(users.map(u => u._id === selectedUser._id ? selectedUser : u));
       setIsEditModalOpen(false);
@@ -60,11 +63,14 @@ function AllUsers() {
     } catch (error) {
       console.error('Error updating user:', error);
       toast.error('Failed to update user');
+    } finally {
+      setIsUpdating(false); // Reset updating state regardless of outcome
     }
   };
 
   const handleAddUser = async () => {
     try {
+      setIsAdding(true); // Set adding state to true
       const response = await axios.post(`${config.API_URL}/api/user`, newUser, { withCredentials: true });
       setUsers([...users, response.data.data]);
       setIsAddUserModalOpen(false);
@@ -82,10 +88,12 @@ function AllUsers() {
     } catch (error) {
       console.error('Error adding user:', error);
       toast.error('Failed to add user');
+    } finally {
+      setIsAdding(false); // Reset adding state regardless of outcome
     }
   };
 
-  const renderUserForm = (user, setUser, handleSubmit, formTitle, submitText) => (
+  const renderUserForm = (user, setUser, handleSubmit, formTitle, submitText, isProcessing) => (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-lg shadow-xl w-full max-w-md overflow-hidden">
         <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
@@ -94,6 +102,7 @@ function AllUsers() {
             <button
               onClick={() => formTitle.includes("Add") ? setIsAddUserModalOpen(false) : setIsEditModalOpen(false)}
               className="text-gray-500 hover:text-gray-700 focus:outline-none"
+              disabled={isProcessing}
             >
               <svg className="h-5 w-5" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
                 <path d="M6 18L18 6M6 6l12 12"></path>
@@ -115,6 +124,7 @@ function AllUsers() {
                   onChange={(e) => setUser({...user, name: e.target.value})}
                   className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                   required
+                  disabled={isProcessing}
                 />
               </div>
               <div className="mb-4">
@@ -125,6 +135,7 @@ function AllUsers() {
                   onChange={(e) => setUser({...user, email: e.target.value})}
                   className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                   required
+                  disabled={isProcessing}
                 />
               </div>
             </div>
@@ -138,6 +149,7 @@ function AllUsers() {
                   onChange={(e) => setUser({...user, password: e.target.value})}
                   className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                   required
+                  disabled={isProcessing}
                 />
               </div>
             )}
@@ -151,6 +163,7 @@ function AllUsers() {
                   onChange={(e) => setUser({...user, employeeCode: e.target.value})}
                   className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                   required
+                  disabled={isProcessing}
                 />
               </div>
               <div className="mb-4">
@@ -161,6 +174,7 @@ function AllUsers() {
                   onChange={(e) => setUser({...user, medicalCardNumber: e.target.value})}
                   className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                   required
+                  disabled={isProcessing}
                 />
               </div>
             </div>
@@ -173,6 +187,7 @@ function AllUsers() {
                 onChange={(e) => setUser({...user, address: e.target.value})}
                 className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                 required
+                disabled={isProcessing}
               />
             </div>
             
@@ -186,6 +201,7 @@ function AllUsers() {
                   onChange={(e) => setUser({...user, balance: Number(e.target.value)})}
                   className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                   required
+                  disabled={isProcessing}
                 />
               </div>
               <div className="mb-4">
@@ -195,6 +211,7 @@ function AllUsers() {
                   onChange={(e) => setUser({...user, role: e.target.value})}
                   className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                   required
+                  disabled={isProcessing}
                 >
                   <option value="user">User</option>
                   <option value="admin">Admin</option>
@@ -207,18 +224,30 @@ function AllUsers() {
                 type="button"
                 onClick={() => formTitle.includes("Add") ? setIsAddUserModalOpen(false) : setIsEditModalOpen(false)}
                 className="px-4 py-2 border border-gray-300 bg-white text-gray-700 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-all"
+                disabled={isProcessing}
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className={`px-4 py-2 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all ${
+                disabled={isProcessing}
+                className={`px-4 py-2 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all flex items-center justify-center ${
                   formTitle.includes("Add") 
                     ? "bg-green-600 hover:bg-green-700 focus:ring-green-500"
                     : "bg-blue-600 hover:bg-blue-700 focus:ring-blue-500"
-                }`}
+                } ${isProcessing ? 'opacity-75 cursor-not-allowed' : ''}`}
               >
-                {submitText}
+                {isProcessing ? (
+                  <>
+                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    {formTitle.includes("Add") ? "Creating..." : "Saving..."}
+                  </>
+                ) : (
+                  submitText
+                )}
               </button>
             </div>
           </form>
@@ -374,7 +403,8 @@ function AllUsers() {
         setNewUser, 
         handleAddUser, 
         "Add New User", 
-        "Create User"
+        "Create User",
+        isAdding
       )}
 
       {isEditModalOpen && selectedUser && renderUserForm(
@@ -382,7 +412,8 @@ function AllUsers() {
         setSelectedUser, 
         handleSaveEdit, 
         "Edit User", 
-        "Save Changes"
+        "Save Changes",
+        isUpdating
       )}
     </div>
   );
