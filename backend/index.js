@@ -23,6 +23,7 @@ app.get('/', (req, res) => {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use(morgan('dev'));
 app.use(cors({
   origin: (origin, callback) => {
     if (!origin || origin === process.env.CLIENT_URL) {
@@ -35,9 +36,6 @@ app.use(cors({
   credentials: true
 }));
 
-if (process.env.NODE_ENV === 'development') {
-  app.use(morgan('dev'));
-}
 
 // Routes
 app.use('/api/auth', authRoute);
