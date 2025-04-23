@@ -5,7 +5,7 @@ export default function AuthLoader() {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    if (progress < 100) {
+    if (progress < 99) {
       const timer = setTimeout(() => {
         setProgress(prev => prev + 1);
       }, 30);

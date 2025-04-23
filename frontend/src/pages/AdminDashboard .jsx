@@ -101,7 +101,7 @@ const AdminDashboard = () => {
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
-      toast.success(`File "${file.name}" uploaded successfully. In a real application, this would process the transaction data.`);
+      toast.error("Something went wrong while uploading csv file")
     }
   };
 
